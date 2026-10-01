@@ -27,7 +27,7 @@ Data visualisation plugins for HighQ
     -  If this is your first time using these plugins, download the `engineerLegal-plugins.js` template file above and open it in a text editor of your choice.
     -  If you already have one or more plugins installed, you should edit your current `engineerLegal-plugins.js` file. In your HighQ instance, go to **Your Profile Picture / Icon** (top right) > **System Admin** > **File Library** and look for `engineerLegal-plugins.js`, right click and select "Save link as..." or similar. This will save the file to your local machine for you to open it in a text editor of your choice.
     > **Note:** You may need to right click the file and select "Open with..." to edit the files with Notepad
-2. **Download JavaScript Files**: Download `engineerCore.js` and any plugins you want to use from the folders above.
+2. **Download JavaScript Files**: Download `engineerCore.js` and any plugins you want to use from the folders above. The `lib` folder contains JavaScript library files that enable optional features for exporting some plugins.
 3. **Upload to HighQ File Library**:
    - In your HighQ instance, go to **Your Profile Picture / Icon** (top right) > **System Admin** > **File Library**.
    - Click **Add new file** and upload `engineerCore.js`.
