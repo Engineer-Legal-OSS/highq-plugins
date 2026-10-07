@@ -181,7 +181,7 @@ function engineerList(userOptions) {
             this.showTable = 'true';
             this.disableHyperlinks = 'true';
         }
-        if (this.panelLinks == 'join' && !customOptions.iSheetViewLink) {
+        if (this.panelLinks == 'join' && !this.iSheetViewLink) {
             throw new Error('panelLinks: "join" requires a table div and HighQ link to another iSheet view using iSheetViewLink');
         }
         this.clickFade = customOptions.clickFade ? customOptions.clickFade : 'false';
