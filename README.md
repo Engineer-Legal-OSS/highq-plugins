@@ -61,7 +61,7 @@ Data visualisation plugins for HighQ
 
 If updated versions become available
 
-1. Download the new JS files provided.
+1. Download the new .js file in each plugin folder (i.e. engineerTable.js in the engineerTable folder).
 2. Navigate to **System Admin** > **File Library** and locate your existing plugin file.
 3. Click on the **File ID** to the left of the filename to open the **Update file** page.
 4. Replace the old file with the new file and click **Save**.
