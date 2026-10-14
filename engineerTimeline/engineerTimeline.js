@@ -814,13 +814,6 @@ function engineerTimeline(userOptions) {
     }
 
     /**
-    * jQuery custom selector that allows to find elements that contain a case insensitive text
-    */
-    jQuery.expr[':'].icontains = function (a, i, m) {
-        return jQuery(a).text().toUpperCase().includes(m[3].toUpperCase());
-    };
-
-    /**
     * Creates a new iSheet URL with the specified parameters. 
     */
     function buildISheetUrl(basePath, itemId, removeSheetId, extraParams) {

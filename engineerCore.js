@@ -21,9 +21,64 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
-/* ngineerCore v5.0.0 */
+/* engineerCore v5.0.0 */
 var $e = jQuery.noConflict();
-var highqShadowRoot = document.getElementsByTagName('app-dashboard-builder')[0]?.shadowRoot;
+
+(function($){
+    const getRoot = () => {
+        const host = document.querySelector('app-dashboard-builder');
+        return (host?.shadowRoot) ? host.shadowRoot : document;
+    };
+
+    const originalInit = $.fn.init;
+
+    $.fn.init = function(selector, context, rootjQuery){
+
+        // 1. If selector is falsy → normal jQuery behavior
+        if (!selector) {
+            return new originalInit(selector, context, rootjQuery);
+        }
+
+        // 2. If selector is already a jQuery object → return it untouched
+        if (selector instanceof $) {
+            return selector;
+        }
+
+        // 3. If selector is a DOM node, NodeList, Window, Document → normal behavior
+        if (
+            selector instanceof Node ||
+            selector instanceof NodeList ||
+            selector === window ||
+            selector === document
+        ) {
+            return new originalInit(selector, context, rootjQuery);
+        }
+
+        // 4. If selector is an HTML string → normal jQuery behavior
+        if (typeof selector === 'string' && selector.trim().startsWith('<')) {
+            return new originalInit(selector, context, rootjQuery);
+        }
+
+        // 5. If selector is NOT a string → normal behavior
+        if (typeof selector !== 'string') {
+            return new originalInit(selector, context, rootjQuery);
+        }
+
+        // 6. If selector *is* a string → Shadow DOM–aware selection
+        const root = getRoot();
+        try {
+            const nodes = root.querySelectorAll(selector);
+            return new originalInit(nodes, context, rootjQuery);
+        } catch (err) {
+            // If selector is invalid for querySelectorAll, fall back to normal jQuery
+            return new originalInit(selector, context, rootjQuery);
+        }
+    };
+
+    $.fn.init.prototype = $.fn;
+
+})( $e );
+
 
 function xmlToObj(x) {
     return engineercore_xmlToObj(x);
@@ -47,7 +102,7 @@ function engineercore_getCurrentUserEmail() {
 }
 
 // Function to call an EngineerLegal Plugin
-function engineerLegal(options) {
+async function engineerLegal(options) {
     if (options.plugin) {
         let uppercasePlugin = options.plugin.charAt(0).toUpperCase() + options.plugin.substr(1);
         let pluginFunction = 'engineer' + uppercasePlugin;
@@ -57,7 +112,7 @@ function engineerLegal(options) {
                 window[pluginFunction](options);
             }
         } catch (error) {
-            engineercore_load(options.plugin).then(function () {
+            await engineercore_load(options.plugin).then(function () {
                 window[pluginFunction](options);
             });
         }
@@ -84,7 +139,7 @@ async function engineercore_load(libname) {
                 url: pluginManifest[libname],
                 error: function (request, status, errorThrown) {
                     console.error('engineerCore unable to load ' + libname + ', it may be incorrectly referenced in engineerLegal-plugins');
-                    loadReject();
+                    loadReject(new Error('engineerCore unable to load ' + libname + ', it may be incorrectly referenced in engineerLegal-plugins'));
                 }
             }).done(function () {
                 window.engineerLegalPlugins[libname].status = 1;
@@ -104,7 +159,7 @@ async function engineercore_load(libname) {
                     attemptCount++;
                     if (attemptCount > 20) {
                         clearInterval(pluginPoll);
-                        loadReject();
+                        loadReject(new Error('engineerCore unable to load ' + libname + ', it may be incorrectly referenced in engineerLegal-plugins'));
                     }
                 }
             }, 50);
@@ -169,7 +224,7 @@ function engineercore_xmlToObj(xmlDoc) {
                 result[xmlNode.nodeName].push(jsonNode);
             }
         } else if (tags) {
-            if (tags.indexOf(xmlNode.nodeName) != -1) {
+            if (tags.includes(xmlNode.nodeName)) {
                 result[xmlNode.nodeName] = [jsonNode];
             } else {
                 result[xmlNode.nodeName] = jsonNode;
@@ -319,17 +374,17 @@ function engineercore_parseColorToRgb(color) {
         } else if (hex.length !== 6) {
             return null;
         }
-        const intVal = parseInt(hex, 16);
+        const intVal = Number.parseInt(hex, 16);
         return { r: (intVal >> 16) & 255, g: (intVal >> 8) & 255, b: intVal & 255, a: 1 };
     }
     // rgb() or rgba()
     const rgbMatch = color.match(/rgba?\s*\(\s*([^\)]+)\)/i);
     if (rgbMatch) {
         const parts = rgbMatch[1].split(',').map(p => p.trim());
-        const r = parseFloat(parts[0]);
-        const g = parseFloat(parts[1]);
-        const b = parseFloat(parts[2]);
-        const a = parts[3] !== undefined ? parseFloat(parts[3]) : 1;
+        const r = Number.parseFloat(parts[0]);
+        const g = Number.parseFloat(parts[1]);
+        const b = Number.parseFloat(parts[2]);
+        const a = parts[3] !== undefined ? Number.parseFloat(parts[3]) : 1;
         return { r: r, g: g, b: b, a: a };
     }
     // named colors or other formats - use computed style
@@ -340,10 +395,10 @@ function engineercore_parseColorToRgb(color) {
         document.body.appendChild(el);
         const computed = getComputedStyle(el).color;
         el.remove();
-        const m = computed.match(/rgba?\s*\(\s*([^\)]+)\)/i);
+        const m = new RegExp(/rgba?\s*\(\s*([^\)]+)\)/i).exec(computed);
         if (m) {
             const parts = m[1].split(',').map(p => p.trim());
-            return { r: parseFloat(parts[0]), g: parseFloat(parts[1]), b: parseFloat(parts[2]), a: parts[3] !== undefined ? parseFloat(parts[3]) : 1 };
+            return { r: Number.parseFloat(parts[0]), g: Number.parseFloat(parts[1]), b: Number.parseFloat(parts[2]), a: parts[3] !== undefined ? parseFloat(parts[3]) : 1 };
         }
     } catch (e) { }
     return null;
@@ -403,7 +458,7 @@ function engineercore_getLastModifiedDate(xmlObj) {
 function engineercore_safeCSS(name) {
     if (name) {
         return name.replace(/[^a-z0-9]/g, function (s) {
-            let c = s.charCodeAt(0);
+            let c = s.codePointAt(0);
             if (c == 32) return '-';
             if (c >= 65) if (c <= 90) return '_' + s.toLowerCase();
             return '';
@@ -472,7 +527,7 @@ function engineercore_modal(modalTitleText, $bodyContent) {
 * jQuery custom selector that allows to find elements that contain a case insensitive text
 */
 jQuery.expr[':'].icontains = function (a, i, m) {
-    return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+    return jQuery(a).text().toUpperCase().includes(m[3].toUpperCase());
 };
 
 //download.js v4.2, by dandavis; 2008-2017. [MIT] see http://danml.com/download.html for tests/usage
