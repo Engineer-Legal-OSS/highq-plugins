@@ -61,11 +61,11 @@ Data visualisation plugins for HighQ
 
 If updated versions become available
 
-1. Download the new .js file in each plugin folder (i.e. engineerTable.js in the engineerTable folder).
+1. Download the new engineerCore.js file then the .js file in each plugin folder (i.e. engineerTable.js in the engineerTable folder).
 2. Navigate to **System Admin** > **File Library** and locate your existing plugin file.
 3. Click on the **File ID** to the left of the filename to open the **Update file** page.
 4. Replace the old file with the new file and click **Save**.
 
 > **Warning:** Overwrites occur immediately upon clicking **Save** and are irreversible. Always maintain local backups before overwriting files in the File Library.
 
-> **Note on Caching:** Browsers may cache older script versions. If users report display issues, instruct them to perform a hard refresh (`Ctrl + Shift + R` or `Cmd + Shift + R`).
+> **Note on Caching:** Browsers may cache older script versions. After an update, go to System Admin and click the 'Refresh CDN cache' button in the top right. If users report display issues, instruct them to perform a hard refresh in their browser (`Ctrl + Shift + R` or `Cmd + Shift + R`)
