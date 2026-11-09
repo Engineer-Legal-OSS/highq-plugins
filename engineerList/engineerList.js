@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-var engineerListVersion = '5.0.0';
+var engineerListVersion = '5.0.1';
 
 function engineerList(userOptions) {
     let $rootContainer;
@@ -865,7 +865,7 @@ function engineerList(userOptions) {
                     if (options.sumColumn > -1) {
                         rowCalcValue = getValue(options.sumColumn, row, true);
                         if (rowCalcValue) {
-                            rowCalcValue = parseFloat(rowCalcValue);
+                            rowCalcValue = Number.parseFloat(rowCalcValue);
                         } else {
                             rowCalcValue = 0;
                         }
@@ -895,7 +895,7 @@ function engineerList(userOptions) {
                             } else {
                                 choroplethCountData.set(groupIdentifier, 1);
                             }
-                            listData.set(i, {
+                            listData.set(groupIdentifier, {
                                 index: i,
                                 rawData: row,
                                 name: name,
@@ -924,8 +924,7 @@ function engineerList(userOptions) {
                             statusColumn = firstChoice;
                         }
                         choiceVal = getValue(statusColumn, row);
-                        let listIndex = listMap.get(groupIdentifier);
-                        let listItem = listData.get(listIndex);
+                        let listItem = listData.get(groupIdentifier);
                         listItem.choices.push({ [choiceVal]: i });
                     }
                 }
