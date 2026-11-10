@@ -65,6 +65,7 @@ If updated versions become available
 2. Navigate to **System Admin** > **File Library** and locate your existing plugin file.
 3. Click on the **File ID** to the left of the filename to open the **Update file** page.
 4. Replace the old file with the new file and click **Save**.
+5. Go to System Admin and click the 'Refresh CDN cache' button in the top right to ensure the new files are delievered to users immediately (see note on caching below)
 
 > **Warning:** Overwrites occur immediately upon clicking **Save** and are irreversible. Always maintain local backups before overwriting files in the File Library.
 
